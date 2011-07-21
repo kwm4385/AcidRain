@@ -34,7 +34,7 @@ public class Util {
     });
 
     // Debug on/off
-    public static final boolean debugOn = true;
+    public static final boolean debugOn = false;
 
     /**
      * Logs an info message from the plugin to the console.
