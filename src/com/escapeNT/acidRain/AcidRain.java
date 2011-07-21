@@ -1,9 +1,15 @@
 
-
 package com.escapeNT.acidRain;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,7 +25,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class AcidRain extends JavaPlugin {
 
     public static final String PLUGIN_NAME = "AcidRain";
-    public static final double PLUGIN_VERSION = 1.0;
+    public static final double PLUGIN_VERSION = 1.2;
+    
+    private static final int CHUNK_DISSOLVE_RATE = 5;
 
     @Override
     public void onEnable() {
@@ -41,7 +49,6 @@ public class AcidRain extends JavaPlugin {
         pm.registerEvent(Type.PLAYER_MOVE, new AcidRainPlayerListener(), Priority.Monitor, this);
         pm.registerEvent(Type.PLAYER_KICK, new AcidRainPlayerListener(), Priority.Monitor, this);
         pm.registerEvent(Type.PLAYER_QUIT, new AcidRainPlayerListener(), Priority.Monitor, this);
-        //pm.registerEvent(Type.CHUNK_LOAD, new AcidRainWorldListener(), Priority.Monitor, this);
 
         // Start player damager
         this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
@@ -54,54 +61,112 @@ public class AcidRain extends JavaPlugin {
                 }
             }
         }, (long)(Config.getDamageInterval() * 20), (long)(Config.getDamageInterval() * 20));
+        
+        // Start block dissolver
+        if(Config.willDissolveBlocks()) {
+            this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+                public void run() {
+                    for(World w : getServer().getWorlds()) {
+                        if(Util.getWorldIsAcidRaining().get(w)) {
+                            Random r = new Random();
+                            List<Chunk> chunksAffected = new ArrayList<Chunk>();
+                            for(Chunk c : w.getLoadedChunks()) {
+                                int randInt = r.nextInt(100);
+                                if(randInt <= CHUNK_DISSOLVE_RATE) {
+                                    chunksAffected.add(c);
+                                }
+                            }
+                            for(Chunk c : chunksAffected) {
+                                if(Util.debugOn) {
+                                    Util.log("Dissolve sweep for chunk" + c);
+                                }
+                                for(int x = 0; x <= 15; x++) {
+                                    for(int z = 0; z <= 15; z++) {
+                                        for(int y = 126; y > 0; y--) {
+                                            Block b = c.getBlock(x, y, z);
+                                            if(b.getType() == Material.GRASS) {
+                                                int randInt = r.nextInt(100);
+                                                if(randInt <= Config.getDissolveBlockChance()) {
+                                                    b.setType(Material.DIRT);
+                                                    if(Util.debugOn) {
+                                                        Util.log("Block dissolved.");
+                                                    }
+                                                }
+                                                break;
+                                            }
+                                            else if(b.getType() != Material.AIR) {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            } 
+                        }
+                    }
+                }
+            }, 600L, 1200L);
+        }   
 
+        // Finish
         Util.log("version " + PLUGIN_VERSION + " enabled.");
     }
 
     @Override
     public void onDisable() {
-        Util.log("disabled.");
+        Util.log("version " + PLUGIN_VERSION + " disabled.");
     }
     
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
 	if(cmd.getName().equalsIgnoreCase("Acidrain")) {
             World w;
-            switch(args.length) {
-                case 0:
-                    if(!(sender instanceof Player)) {
-                        sender.sendMessage(ChatColor.RED + "You must specify a world if you aren't logged in!");
-                        return false;
-                    }
-                    w = ((Player)sender).getWorld();
-                    w.setStorm(true);
-                    w.setWeatherDuration(12000);
-                    Util.getWorldIsAcidRaining().put(w, Boolean.TRUE);
-                    break;
-                case 1:
-                    try {
-                        w = getServer().getWorld(args[0]);
-                    } catch(Exception ex) {
-                        sender.sendMessage(ChatColor.RED + "World not found!");
-                        return false;
-                    }
-                    w.setStorm(true);
-                    w.setWeatherDuration(12000);
-                    Util.getWorldIsAcidRaining().put(w, Boolean.TRUE);
-                    break;
-                case 2:
-                    try {
-                        w = getServer().getWorld(args[0]);
+            try {
+                if(!((Player)sender).isOp()) {
+                    sender.sendMessage(ChatColor.RED + "You must be OP to do that!");
+                    return false;
+                }
+                switch(args.length) {
+                    case 0:
+                        if(!(sender instanceof Player)) {
+                            sender.sendMessage(ChatColor.RED + "You must specify a world if you aren't logged in!");
+                            return false;
+                        }
+                        w = ((Player)sender).getWorld();
                         w.setStorm(true);
-                        w.setWeatherDuration(Integer.parseInt(args[1]));
-                    } catch(NumberFormatException ex) {
-                        sender.sendMessage(ChatColor.RED + "Duration is not a number!");
-                        return false;
-                    } catch(Exception ex) {
-                        sender.sendMessage(ChatColor.RED + "World not found!");
-                        return false;
-                    }
-                    Util.getWorldIsAcidRaining().put(w, Boolean.TRUE);
+                        w.setWeatherDuration(12000);
+                        Util.getWorldIsAcidRaining().put(w, Boolean.TRUE);
+                        Util.acidRainMessage(w);
+                        break;
+                    case 1:
+                        try {
+                            w = getServer().getWorld(args[0]);
+                        } catch(Exception ex) {
+                            sender.sendMessage(ChatColor.RED + "World not found!");
+                            return false;
+                        }
+                        w.setStorm(true);
+                        w.setWeatherDuration(12000);
+                        Util.getWorldIsAcidRaining().put(w, Boolean.TRUE);
+                        Util.acidRainMessage(w);
+                        break;
+                    case 2:
+                        try {
+                            w = getServer().getWorld(args[0]);
+                            w.setStorm(true);
+                            w.setWeatherDuration(Integer.parseInt(args[1]));
+                        } catch(NumberFormatException ex) {
+                            sender.sendMessage(ChatColor.RED + "Duration is not a number!");
+                            return false;
+                        } catch(Exception ex) {
+                            sender.sendMessage(ChatColor.RED + "World not found!");
+                            return false;
+                        }
+                        Util.getWorldIsAcidRaining().put(w, Boolean.TRUE);
+                        Util.acidRainMessage(w);
+                        break;
+                }
+            } catch(Exception ex) {
+                return false;
             }
             return true;
 	}

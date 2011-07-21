@@ -25,8 +25,8 @@ public class Config {
 
     public static void create() {
         new File(mainDirectory).mkdir();
-        //c.setProperty("Chance to dissove block (0-100)", 5);
-        //c.setProperty("Rain dissolves blocks", true);
+        c.setProperty("Chance to dissove block (0-100)", 5);
+        c.setProperty("Rain dissolves blocks", true);
         c.setProperty("Broadcast message", false);
         c.setProperty("Damage interval", 1);
         c.setProperty("Acid rain damage", 1);
@@ -36,8 +36,8 @@ public class Config {
 
     public static void load() {
         c.load();
-        //dissolveBlockChance = ((Integer)c.getProperty("Chance to dissove block (0-100)")).intValue();
-        //dissolveBlocks = ((Boolean)c.getProperty("Rain dissolves blocks")).booleanValue();
+        dissolveBlockChance = ((Integer)c.getProperty("Chance to dissove block (0-100)")).intValue();
+        dissolveBlocks = ((Boolean)c.getProperty("Rain dissolves blocks")).booleanValue();
         broadcastMessage = ((Boolean)c.getProperty("Broadcast message")).booleanValue();
         damageInterval = ((Integer)c.getProperty("Damage interval")).intValue();
         rainDamage = ((Integer)c.getProperty("Acid rain damage")).intValue();

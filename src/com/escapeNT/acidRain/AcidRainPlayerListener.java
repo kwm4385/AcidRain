@@ -43,7 +43,8 @@ public class AcidRainPlayerListener extends PlayerListener {
         World w = p.getWorld();
         Biome b = w.getBlockAt(p.getLocation()).getBiome();
 
-        if(isOutdoors(p) && Util.getWorldIsAcidRaining().get(w) && b != Biome.TUNDRA && b != Biome.TAIGA) {
+        if(isOutdoors(p) && Util.getWorldIsAcidRaining().get(w) 
+                && b != Biome.TUNDRA && b != Biome.TAIGA && b != Biome.DESERT) {
             if(!Util.getAffectedPlayers().contains(p)) {
                 Util.getAffectedPlayers().add(p);
             }

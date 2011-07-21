@@ -6,9 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
-
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -72,6 +73,14 @@ public class Util {
             }
         }
         return l;
+    }
+    
+    public static void acidRainMessage(World w) {
+        if(Config.willBroadcastMessage()) {
+            Util.getPlugin().getServer().broadcastMessage(ChatColor.GRAY
+                    + "Acid rain has begun in world " + w.getName() + "!");
+        }
+        Util.log("Acid rain has begun in world " + w.getName() + "!");
     }
 
     /**
