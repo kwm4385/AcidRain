@@ -27,7 +27,7 @@ public class AcidRain extends JavaPlugin {
     public static final String PLUGIN_NAME = "AcidRain";
     public static final double PLUGIN_VERSION = 1.2;
     
-    private static final int CHUNK_DISSOLVE_RATE = 5;
+    private static final int CHUNK_DISSOLVE_RATE = 8;
 
     @Override
     public void onEnable() {
@@ -66,9 +66,9 @@ public class AcidRain extends JavaPlugin {
         if(Config.willDissolveBlocks()) {
             this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
                 public void run() {
+                    Random r = new Random();
                     for(World w : getServer().getWorlds()) {
-                        if(Util.getWorldIsAcidRaining().get(w)) {
-                            Random r = new Random();
+                        if(Util.getWorldIsAcidRaining().get(w)) {    
                             List<Chunk> chunksAffected = new ArrayList<Chunk>();
                             for(Chunk c : w.getLoadedChunks()) {
                                 int randInt = r.nextInt(100);
@@ -84,13 +84,10 @@ public class AcidRain extends JavaPlugin {
                                     for(int z = 0; z <= 15; z++) {
                                         for(int y = 126; y > 0; y--) {
                                             Block b = c.getBlock(x, y, z);
-                                            if(b.getType() == Material.GRASS) {
+                                            if(Util.AFFECTED_MATERIALS.contains(b.getType())) {
                                                 int randInt = r.nextInt(100);
                                                 if(randInt <= Config.getDissolveBlockChance()) {
-                                                    b.setType(Material.DIRT);
-                                                    if(Util.debugOn) {
-                                                        Util.log("Block dissolved.");
-                                                    }
+                                                    Util.dissolveBlock(b); 
                                                 }
                                                 break;
                                             }

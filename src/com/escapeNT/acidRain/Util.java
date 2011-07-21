@@ -2,13 +2,13 @@
 package com.escapeNT.acidRain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -24,9 +24,17 @@ public class Util {
     private static AcidRain plugin;
     private static HashMap<World, Boolean> worldIsAcidRaining = new HashMap<World, Boolean>();
     private static List<Player> affectedPlayers = new ArrayList<Player>();
+    
+    public static final List<Material> AFFECTED_MATERIALS = Arrays.asList(new Material[] {
+        Material.GRASS, 
+        Material.LONG_GRASS,
+        Material.LEAVES,
+        Material.RED_ROSE,
+        Material.YELLOW_FLOWER
+    });
 
     // Debug on/off
-    public static final boolean debugOn = false;
+    public static final boolean debugOn = true;
 
     /**
      * Logs an info message from the plugin to the console.
@@ -56,23 +64,26 @@ public class Util {
     }
 
     /**
-     * Gets the non-air blocks from a given chunk.
-     * @param c The chunk to get blocks from.
-     * @return The list non-air of blocks in the chunk.
+     * Dissolves the specified block.
+     * @param b The block to dissolve.
      */
-    public static List<Block> getBlocks(Chunk c) {
-        List<Block> l = new ArrayList<Block>();
-        for(int y = 0; y <= 127; y++) {
-            for(int x = 0; x <= 15; x++) {
-                for(int z = 0; z <= 15; z++) {
-                    Block b = c.getBlock(x, y, z);
-                    if(b.getType() != Material.AIR) {
-                        l.add(b);
-                    }
-                }
-            }
+    public static void dissolveBlock(Block b) {
+        switch(b.getType()) {
+            case GRASS:
+                b.setType(Material.DIRT);
+                break;
+            case LONG_GRASS:
+            case RED_ROSE:
+            case YELLOW_FLOWER:
+                b.setType(Material.DEAD_BUSH);
+                break;  
+            case LEAVES:
+                b.setType(Material.AIR);
+                break;
         }
-        return l;
+        if(Util.debugOn) {
+            Util.log("Block dissolved.");
+        }
     }
     
     public static void acidRainMessage(World w) {
