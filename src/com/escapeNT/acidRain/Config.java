@@ -22,12 +22,14 @@ public class Config {
     private static int dissolveBlockChance;
     private static boolean broadcastMessage;
     private static boolean dissolveBlocks;
+    private static String rainMessage;
 
     public static void create() {
         new File(mainDirectory).mkdir();
+        c.setProperty("Broadcast message text", "Acid rain has begun in <world>");
+        c.setProperty("Broadcast message", false);
         c.setProperty("Chance to dissolve block (0-100)", 5);
         c.setProperty("Rain dissolves blocks", true);
-        c.setProperty("Broadcast message", false);
         c.setProperty("Damage interval", 1);
         c.setProperty("Acid rain damage", 1);
         c.setProperty("Acid rain chance (0-100)", 25);
@@ -36,6 +38,7 @@ public class Config {
 
     public static void load() {
         c.load();
+        rainMessage = ((String)c.getProperty("Broadcast message text"));
         dissolveBlockChance = ((Integer)c.getProperty("Chance to dissolve block (0-100)")).intValue();
         dissolveBlocks = ((Boolean)c.getProperty("Rain dissolves blocks")).booleanValue();
         broadcastMessage = ((Boolean)c.getProperty("Broadcast message")).booleanValue();
@@ -84,5 +87,12 @@ public class Config {
      */
     public static int getDissolveBlockChance() {
         return dissolveBlockChance;
+    }
+
+    /**
+     * @return the rainMessage
+     */
+    public static String getRainMessage() {
+        return rainMessage;
     }
 }

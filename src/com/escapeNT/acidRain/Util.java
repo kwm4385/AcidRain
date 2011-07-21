@@ -87,11 +87,11 @@ public class Util {
     }
     
     public static void acidRainMessage(World w) {
+        String m = Config.getRainMessage().replace("<world>", w.getName());
         if(Config.willBroadcastMessage()) {
-            Util.getPlugin().getServer().broadcastMessage(ChatColor.GRAY
-                    + "Acid rain has begun in world " + w.getName() + "!");
+            Util.getPlugin().getServer().broadcastMessage(ChatColor.GRAY + m);
         }
-        Util.log("Acid rain has begun in world " + w.getName() + "!");
+        Util.log(m);
     }
 
     /**
