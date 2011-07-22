@@ -1,6 +1,6 @@
 name: AcidRain
 main: com.escapeNT.acidRain.AcidRain
-version: 1.2.2
+version: 1.2.3
 commands:
   Acidrain:
     description: Starts acid rain in the current or specified world.

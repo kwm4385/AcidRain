@@ -87,11 +87,37 @@ public class Util {
     }
     
     public static void acidRainMessage(World w) {
-        String m = Config.getRainMessage().replace("<world>", w.getName());
-        if(Config.willBroadcastMessage()) {
-            Util.getPlugin().getServer().broadcastMessage(ChatColor.GRAY + m);
+        HashMap<String, ChatColor> color = new HashMap<String, ChatColor>();
+        color.put("&0", ChatColor.BLACK);
+        color.put("&1", ChatColor.DARK_BLUE);
+        color.put("&2", ChatColor.DARK_GREEN);
+        color.put("&3", ChatColor.DARK_PURPLE);
+        color.put("&4", ChatColor.DARK_RED);
+        color.put("&5", ChatColor.DARK_PURPLE);
+        color.put("&6", ChatColor.GOLD);
+        color.put("&7", ChatColor.GRAY);
+        color.put("&8", ChatColor.DARK_GRAY);
+        color.put("&9", ChatColor.BLUE);
+        color.put("&a", ChatColor.GREEN);
+        color.put("&b", ChatColor.BLUE);
+        color.put("&c", ChatColor.RED);
+        color.put("&d", ChatColor.LIGHT_PURPLE);
+        color.put("&e", ChatColor.YELLOW);
+        color.put("&f", ChatColor.WHITE);  
+        
+        String message = Config.getRainMessage().replace("<world>", w.getName());
+        ChatColor col = ChatColor.GRAY;
+        for(String s : color.keySet()) {
+            if(message.contains(s)) {
+                message = message.replace(s, "");
+                col = color.get(s);
+                break;
+            }
         }
-        Util.log(m);
+        
+        if(Config.willBroadcastMessage()) {
+            Util.getPlugin().getServer().broadcastMessage(col + message);
+        }
     }
 
     /**

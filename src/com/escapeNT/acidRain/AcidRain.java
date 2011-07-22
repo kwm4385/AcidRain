@@ -25,7 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class AcidRain extends JavaPlugin {
 
     public static final String PLUGIN_NAME = "AcidRain";
-    public static final String PLUGIN_VERSION = "1.2.2";
+    public static final String PLUGIN_VERSION = "1.2.3";
     
     private static final int CHUNK_DISSOLVE_RATE = 8;
 
