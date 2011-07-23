@@ -114,7 +114,6 @@ public class Util {
                 break;
             }
         }
-        
         if(Config.willBroadcastMessage()) {
             Util.getPlugin().getServer().broadcastMessage(col + message);
         }

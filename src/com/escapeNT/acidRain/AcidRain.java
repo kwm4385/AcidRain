@@ -25,18 +25,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class AcidRain extends JavaPlugin {
 
     public static final String PLUGIN_NAME = "AcidRain";
-    public static final String PLUGIN_VERSION = "1.2.3";
+    public static final String PLUGIN_VERSION = "1.2.4";
     
     private static final int CHUNK_DISSOLVE_RATE = 8;
 
     @Override
     public void onEnable() {
         Util.setPlugin(this);
-
-        // Config
-        if(!Config.settingsFile.exists()) {
-            Config.create();
-        }
         Config.load();
         
         for(World w : this.getServer().getWorlds()) {
@@ -68,7 +63,7 @@ public class AcidRain extends JavaPlugin {
                 public void run() {
                     Random r = new Random();
                     for(World w : getServer().getWorlds()) {
-                        if(Util.getWorldIsAcidRaining().get(w)) {    
+                        if(Util.getWorldIsAcidRaining().get(w) != null && Util.getWorldIsAcidRaining().get(w)) {    
                             List<Chunk> chunksAffected = new ArrayList<Chunk>();
                             for(Chunk c : w.getLoadedChunks()) {
                                 int randInt = r.nextInt(100);
@@ -116,7 +111,7 @@ public class AcidRain extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
 	if(cmd.getName().equalsIgnoreCase("Acidrain")) {
-            World w;
+            World w = null;
             try {
                 if(!((Player)sender).isOp()) {
                     sender.sendMessage(ChatColor.RED + "You must be OP to do that!");
@@ -129,6 +124,10 @@ public class AcidRain extends JavaPlugin {
                             return false;
                         }
                         w = ((Player)sender).getWorld();
+                        if(!Config.getWorldsEnabled().contains(w.getName())) {
+                            ((Player)sender).sendMessage(ChatColor.RED + "Acid rain is not enabled for this world");
+                            break;
+                        } 
                         w.setStorm(true);
                         w.setWeatherDuration(12000);
                         Util.getWorldIsAcidRaining().put(w, Boolean.TRUE);
@@ -141,6 +140,10 @@ public class AcidRain extends JavaPlugin {
                             sender.sendMessage(ChatColor.RED + "World not found!");
                             return false;
                         }
+                        if(!Config.getWorldsEnabled().contains(w.getName())) {
+                            ((Player)sender).sendMessage(ChatColor.RED + "Acid rain is not enabled for this world");
+                            break;
+                        }
                         w.setStorm(true);
                         w.setWeatherDuration(12000);
                         Util.getWorldIsAcidRaining().put(w, Boolean.TRUE);
@@ -149,6 +152,10 @@ public class AcidRain extends JavaPlugin {
                     case 2:
                         try {
                             w = getServer().getWorld(args[0]);
+                            if(!Config.getWorldsEnabled().contains(w.getName())) {
+                                ((Player)sender).sendMessage(ChatColor.RED + "Acid rain is not enabled for this world");
+                                break;
+                            }
                             w.setStorm(true);
                             w.setWeatherDuration(Integer.parseInt(args[1]));
                         } catch(NumberFormatException ex) {
@@ -163,6 +170,9 @@ public class AcidRain extends JavaPlugin {
                         break;
                 }
             } catch(Exception ex) {
+                if(Util.debugOn) {
+                    ex.printStackTrace();
+                }
                 return false;
             }
             return true;

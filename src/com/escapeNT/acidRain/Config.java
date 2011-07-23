@@ -2,8 +2,10 @@
 
 package com.escapeNT.acidRain;
 
-import java.io.File;
 
+
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.util.config.Configuration;
 
 /**
@@ -12,9 +14,7 @@ import org.bukkit.util.config.Configuration;
  */
 public class Config {
 
-    private static final String mainDirectory = "plugins/AcidRain";
-    public static final File settingsFile = new File(mainDirectory + File.separator + "settings.yml");
-    private static Configuration c = new Configuration(settingsFile);
+    private static Configuration c = Util.getPlugin().getConfiguration();
 
     private static int damageInterval;
     private static int rainDamage;
@@ -23,28 +23,18 @@ public class Config {
     private static boolean broadcastMessage;
     private static boolean dissolveBlocks;
     private static String rainMessage;
-
-    public static void create() {
-        new File(mainDirectory).mkdir();
-        c.setProperty("Broadcast message text", "Acid rain has begun in <world>");
-        c.setProperty("Broadcast message", false);
-        c.setProperty("Chance to dissolve block (0-100)", 5);
-        c.setProperty("Rain dissolves blocks", true);
-        c.setProperty("Damage interval", 1);
-        c.setProperty("Acid rain damage", 1);
-        c.setProperty("Acid rain chance (0-100)", 25);
-        c.save();
-    }
+    private static List<String> worldsEnabled;
 
     public static void load() {
-        c.load();
-        rainMessage = ((String)c.getProperty("Broadcast message text"));
-        dissolveBlockChance = ((Integer)c.getProperty("Chance to dissolve block (0-100)")).intValue();
-        dissolveBlocks = ((Boolean)c.getProperty("Rain dissolves blocks")).booleanValue();
-        broadcastMessage = ((Boolean)c.getProperty("Broadcast message")).booleanValue();
-        damageInterval = ((Integer)c.getProperty("Damage interval")).intValue();
-        rainDamage = ((Integer)c.getProperty("Acid rain damage")).intValue();
-        acidRainChance = ((Integer)c.getProperty("Acid rain chance (0-100)")).intValue(); 
+        rainMessage = c.getString("Broadcast message text", "Acid rain has begun in <world>");
+        dissolveBlockChance = c.getInt("Chance to dissolve block (0-100)", 5);
+        dissolveBlocks = c.getBoolean("Rain dissolves blocks", true);
+        broadcastMessage = c.getBoolean("Broadcast message", false);
+        damageInterval = c.getInt("Damage interval", 1);
+        rainDamage = c.getInt("Acid rain damage", 1);
+        acidRainChance = c.getInt("Acid rain chance (0-100)", 25);
+        worldsEnabled = Arrays.asList(c.getString("Worlds enabled (separate with space)", "world").split(" "));
+        c.save();
     }
 
     /**
@@ -94,5 +84,12 @@ public class Config {
      */
     public static String getRainMessage() {
         return rainMessage;
+    }
+
+    /**
+     * @return the worldsEnabled
+     */
+    public static List<String> getWorldsEnabled() {
+        return worldsEnabled;
     }
 }

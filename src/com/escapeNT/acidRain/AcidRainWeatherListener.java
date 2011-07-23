@@ -16,13 +16,13 @@ public class AcidRainWeatherListener extends WeatherListener {
     @Override
     public void onWeatherChange(WeatherChangeEvent event) {
 
-        if(event.toWeatherState() && event.getWorld().getEnvironment() != World.Environment.SKYLANDS) {
+        if(event.toWeatherState() && Config.getWorldsEnabled().contains(event.getWorld().getName()) 
+                && event.getWorld().getEnvironment() != World.Environment.SKYLANDS) {
             int r = new Random().nextInt(100);
             if(r <= Config.getAcidRainChance()) {
                 Util.getWorldIsAcidRaining().put(event.getWorld(), Boolean.TRUE);
                 Util.acidRainMessage(event.getWorld());
             }
-            
         }
         else if(!event.toWeatherState()) {
             Util.getWorldIsAcidRaining().put(event.getWorld(), Boolean.FALSE);
