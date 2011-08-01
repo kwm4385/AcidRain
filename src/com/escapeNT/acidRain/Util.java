@@ -30,7 +30,9 @@ public class Util {
         Material.LONG_GRASS,
         Material.LEAVES,
         Material.RED_ROSE,
-        Material.YELLOW_FLOWER
+        Material.YELLOW_FLOWER,
+        Material.SOIL,
+        Material.CROPS
     });
 
     // Debug on/off
@@ -69,9 +71,11 @@ public class Util {
      */
     public static void dissolveBlock(Block b) {
         switch(b.getType()) {
+            case SOIL:
             case GRASS:
                 b.setType(Material.DIRT);
                 break;
+            case CROPS:
             case LONG_GRASS:
             case RED_ROSE:
             case YELLOW_FLOWER:

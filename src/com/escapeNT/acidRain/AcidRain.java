@@ -1,15 +1,9 @@
 
 package com.escapeNT.acidRain;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,6 +12,9 @@ import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.escapeNT.acidRain.tasks.BlockDissolveTask;
+import com.escapeNT.acidRain.tasks.PlayerDamageTask;
+
 /**
  * AcidRain plugin class.
  * @author escapeNT
@@ -25,9 +22,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class AcidRain extends JavaPlugin {
 
     public static final String PLUGIN_NAME = "AcidRain";
-    public static final String PLUGIN_VERSION = "1.2.4";
+    public static final String PLUGIN_VERSION = "1.2.5";
     
-    private static final int CHUNK_DISSOLVE_RATE = 8;
+    public static final int CHUNK_DISSOLVE_RATE = 8;
 
     @Override
     public void onEnable() {
@@ -46,57 +43,12 @@ public class AcidRain extends JavaPlugin {
         pm.registerEvent(Type.PLAYER_QUIT, new AcidRainPlayerListener(), Priority.Monitor, this);
 
         // Start player damager
-        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-            public void run() {
-                for(Player p : Util.getAffectedPlayers()) {
-                    p.damage(Config.getRainDamage());
-                    if(Util.debugOn) {
-                        Util.log("Dissolving player " + p.getDisplayName());
-                    }
-                }
-            }
-        }, (long)(Config.getDamageInterval() * 20), (long)(Config.getDamageInterval() * 20));
+        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new PlayerDamageTask(), 
+                (long)(Config.getDamageInterval() * 20), (long)(Config.getDamageInterval() * 20));
         
         // Start block dissolver
         if(Config.willDissolveBlocks()) {
-            this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-                public void run() {
-                    Random r = new Random();
-                    for(World w : getServer().getWorlds()) {
-                        if(Util.getWorldIsAcidRaining().get(w) != null && Util.getWorldIsAcidRaining().get(w)) {    
-                            List<Chunk> chunksAffected = new ArrayList<Chunk>();
-                            for(Chunk c : w.getLoadedChunks()) {
-                                int randInt = r.nextInt(100);
-                                if(randInt <= CHUNK_DISSOLVE_RATE) {
-                                    chunksAffected.add(c);
-                                }
-                            }
-                            for(Chunk c : chunksAffected) {
-                                if(Util.debugOn) {
-                                    Util.log("Dissolve sweep for chunk" + c);
-                                }
-                                for(int x = 0; x <= 15; x++) {
-                                    for(int z = 0; z <= 15; z++) {
-                                        for(int y = 126; y > 0; y--) {
-                                            Block b = c.getBlock(x, y, z);
-                                            if(Util.AFFECTED_MATERIALS.contains(b.getType())) {
-                                                int randInt = r.nextInt(100);
-                                                if(randInt <= Config.getDissolveBlockChance()) {
-                                                    Util.dissolveBlock(b); 
-                                                }
-                                                break;
-                                            }
-                                            else if(b.getType() != Material.AIR) {
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                            } 
-                        }
-                    }
-                }
-            }, 600L, 1200L);
+            this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BlockDissolveTask(), 600L, 1200L);
         }   
 
         // Finish
