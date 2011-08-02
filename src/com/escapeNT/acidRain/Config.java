@@ -33,7 +33,7 @@ public class Config {
         damageInterval = c.getInt("Damage interval", 1);
         rainDamage = c.getInt("Acid rain damage", 1);
         acidRainChance = c.getInt("Acid rain chance (0-100)", 25);
-        worldsEnabled = Arrays.asList(c.getString("Worlds enabled (separate with space)", "world").split(" "));
+        worldsEnabled = Arrays.asList(c.getString("Worlds enabled (separate with comma)", "world").split(","));
         c.save();
     }
 

@@ -22,7 +22,7 @@ import com.escapeNT.acidRain.tasks.PlayerDamageTask;
 public class AcidRain extends JavaPlugin {
 
     public static final String PLUGIN_NAME = "AcidRain";
-    public static final String PLUGIN_VERSION = "1.2.5";
+    public static final String PLUGIN_VERSION = "1.2.5_1";
     
     public static final int CHUNK_DISSOLVE_RATE = 8;
 
