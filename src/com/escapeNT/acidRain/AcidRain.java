@@ -14,6 +14,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.escapeNT.acidRain.tasks.BlockDissolveTask;
 import com.escapeNT.acidRain.tasks.PlayerDamageTask;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 /**
  * AcidRain plugin class.
@@ -22,7 +24,9 @@ import com.escapeNT.acidRain.tasks.PlayerDamageTask;
 public class AcidRain extends JavaPlugin {
 
     public static final String PLUGIN_NAME = "AcidRain";
-    public static final String PLUGIN_VERSION = "1.2.5_1";
+    public static final String PLUGIN_VERSION = "1.2.6";
+
+    public static final String IMMUNE_PERMISSION = "acidrain.immune";
     
     public static final int CHUNK_DISSOLVE_RATE = 8;
 
@@ -41,6 +45,8 @@ public class AcidRain extends JavaPlugin {
         pm.registerEvent(Type.PLAYER_MOVE, new AcidRainPlayerListener(), Priority.Monitor, this);
         pm.registerEvent(Type.PLAYER_KICK, new AcidRainPlayerListener(), Priority.Monitor, this);
         pm.registerEvent(Type.PLAYER_QUIT, new AcidRainPlayerListener(), Priority.Monitor, this);
+
+        pm.addPermission(new Permission(IMMUNE_PERMISSION, PermissionDefault.FALSE));
 
         // Start player damager
         this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new PlayerDamageTask(), 
