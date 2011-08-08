@@ -26,7 +26,7 @@ import me.escapeNT.pail.Pail;
 public class AcidRain extends JavaPlugin {
 
     public static final String PLUGIN_NAME = "AcidRain";
-    public static final String PLUGIN_VERSION = "1.2.6";
+    public static final String PLUGIN_VERSION = "1.2.7";
 
     public static final String IMMUNE_PERMISSION = "acidrain.immune";
     
