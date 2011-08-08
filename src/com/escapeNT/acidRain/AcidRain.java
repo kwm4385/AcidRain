@@ -2,6 +2,7 @@
 package com.escapeNT.acidRain;
 
 
+import com.escapeNT.acidRain.PailCompat.SettingsInterface;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -11,11 +12,12 @@ import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 import com.escapeNT.acidRain.tasks.BlockDissolveTask;
 import com.escapeNT.acidRain.tasks.PlayerDamageTask;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
+import me.escapeNT.pail.Pail;
 
 /**
  * AcidRain plugin class.
@@ -55,7 +57,12 @@ public class AcidRain extends JavaPlugin {
         // Start block dissolver
         if(Config.willDissolveBlocks()) {
             this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BlockDissolveTask(), 600L, 1200L);
-        }   
+        }
+
+        // Load GUI
+        if(pm.getPlugin("Pail") != null) {
+            ((Pail)pm.getPlugin("Pail")).loadInterfaceComponent("Acid Rain", new SettingsInterface());
+        }
 
         // Finish
         Util.log("version " + PLUGIN_VERSION + " enabled.");
