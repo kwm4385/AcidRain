@@ -43,10 +43,11 @@ public class AcidRain extends JavaPlugin {
 
         // Register events
         PluginManager pm = this.getServer().getPluginManager();
+        AcidRainPlayerListener pl = new AcidRainPlayerListener();
         pm.registerEvent(Type.WEATHER_CHANGE, new AcidRainWeatherListener(), Priority.Monitor, this);
-        pm.registerEvent(Type.PLAYER_MOVE, new AcidRainPlayerListener(), Priority.Monitor, this);
-        pm.registerEvent(Type.PLAYER_KICK, new AcidRainPlayerListener(), Priority.Monitor, this);
-        pm.registerEvent(Type.PLAYER_QUIT, new AcidRainPlayerListener(), Priority.Monitor, this);
+        pm.registerEvent(Type.PLAYER_MOVE, pl, Priority.Monitor, this);
+        pm.registerEvent(Type.PLAYER_KICK, pl, Priority.Monitor, this);
+        pm.registerEvent(Type.PLAYER_QUIT, pl, Priority.Monitor, this);
 
         pm.addPermission(new Permission(IMMUNE_PERMISSION, PermissionDefault.FALSE));
 
