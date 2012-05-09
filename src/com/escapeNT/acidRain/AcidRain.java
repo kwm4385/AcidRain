@@ -2,14 +2,13 @@
 package com.escapeNT.acidRain;
 
 
-import com.escapeNT.acidRain.PailCompat.SettingsInterface;
+import com.escapeNT.acidRain.Listeners.AcidRainPlayerListener;
+import com.escapeNT.acidRain.Listeners.AcidRainWeatherListener;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.permissions.Permission;
@@ -17,7 +16,6 @@ import org.bukkit.permissions.PermissionDefault;
 
 import com.escapeNT.acidRain.tasks.BlockDissolveTask;
 import com.escapeNT.acidRain.tasks.PlayerDamageTask;
-import me.escapeNT.pail.Pail;
 
 /**
  * AcidRain plugin class.
@@ -35,7 +33,8 @@ public class AcidRain extends JavaPlugin {
     @Override
     public void onEnable() {
         Util.setPlugin(this);
-        Config.load();
+        Config config = new Config(this);
+        config.load();
         
         for(World w : this.getServer().getWorlds()) {
             Util.getWorldIsAcidRaining().put(w, Boolean.FALSE);
@@ -43,27 +42,24 @@ public class AcidRain extends JavaPlugin {
 
         // Register events
         PluginManager pm = this.getServer().getPluginManager();
-        AcidRainPlayerListener pl = new AcidRainPlayerListener();
-        pm.registerEvent(Type.WEATHER_CHANGE, new AcidRainWeatherListener(), Priority.Monitor, this);
-        pm.registerEvent(Type.PLAYER_MOVE, pl, Priority.Monitor, this);
-        pm.registerEvent(Type.PLAYER_KICK, pl, Priority.Monitor, this);
-        pm.registerEvent(Type.PLAYER_QUIT, pl, Priority.Monitor, this);
+        pm.registerEvents(new AcidRainPlayerListener(), this);
+        pm.registerEvents(new AcidRainWeatherListener(this), this);
 
         pm.addPermission(new Permission(IMMUNE_PERMISSION, PermissionDefault.FALSE));
 
         // Start player damager
-        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new PlayerDamageTask(), 
-                (long)(Config.getDamageInterval() * 20), (long)(Config.getDamageInterval() * 20));
+        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new PlayerDamageTask(this),
+                (long)(getConfig().getInt(Config.damageInterval) * 20), (long)(getConfig().getInt(Config.damageInterval) * 20));
         
         // Start block dissolver
-        if(Config.willDissolveBlocks()) {
-            this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BlockDissolveTask(), 600L, 1200L);
+        if(getConfig().getBoolean(Config.dissolveBlocks)) {
+            this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BlockDissolveTask(this), 600L, 1200L);
         }
 
-        // Load GUI
-        if(pm.getPlugin("Pail") != null) {
+        // Fuck pail
+/*        if(pm.getPlugin("Pail") != null) {
             ((Pail)pm.getPlugin("Pail")).loadInterfaceComponent("Acid Rain", new SettingsInterface());
-        }
+        }*/
 
         // Finish
         Util.log("version " + PLUGIN_VERSION + " enabled.");
@@ -90,7 +86,7 @@ public class AcidRain extends JavaPlugin {
                             return false;
                         }
                         w = ((Player)sender).getWorld();
-                        if(!Config.getWorldsEnabled().contains(w.getName())) {
+                        if(!getConfig().getList(Config.worldsEnabled).contains(w.getName())) {
                             ((Player)sender).sendMessage(ChatColor.RED + "Acid rain is not enabled for this world");
                             break;
                         } 
@@ -106,7 +102,7 @@ public class AcidRain extends JavaPlugin {
                             sender.sendMessage(ChatColor.RED + "World not found!");
                             return false;
                         }
-                        if(!Config.getWorldsEnabled().contains(w.getName())) {
+                        if(!getConfig().getList(Config.worldsEnabled).contains(w.getName())) {
                             ((Player)sender).sendMessage(ChatColor.RED + "Acid rain is not enabled for this world");
                             break;
                         }
@@ -118,7 +114,7 @@ public class AcidRain extends JavaPlugin {
                     case 2:
                         try {
                             w = getServer().getWorld(args[0]);
-                            if(!Config.getWorldsEnabled().contains(w.getName())) {
+                            if(!getConfig().getList(Config.worldsEnabled).contains(w.getName())) {
                                 ((Player)sender).sendMessage(ChatColor.RED + "Acid rain is not enabled for this world");
                                 break;
                             }

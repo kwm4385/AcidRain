@@ -1,3 +1,4 @@
+/*  Fuck this shit
 
 package com.escapeNT.acidRain.PailCompat;
 
@@ -10,13 +11,17 @@ import javax.swing.JOptionPane;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
+*/
 /**
  * Settings interface for Pail
  * @author escapeNT
- */
+ *//*
+
 public class SettingsInterface extends javax.swing.JPanel {
 
-    /** Creates new form SettingsInterface */
+    */
+/** Creates new form SettingsInterface *//*
+
     public SettingsInterface() {
         initComponents();
         for(World w : Bukkit.getServer().getWorlds()) {
@@ -26,7 +31,7 @@ public class SettingsInterface extends javax.swing.JPanel {
     }
 
     private void readConfig() {
-        broadcast.setSelected(Config.willBroadcastMessage());
+        broadcast.setSelected();
         damage.setValue(Config.getRainDamage());
         dissolve.setSelected(Config.willDissolveBlocks());
         interval.setValue(Config.getDamageInterval());
@@ -45,9 +50,11 @@ public class SettingsInterface extends javax.swing.JPanel {
         worlds.setSelectedIndices(indices);
     }
 
-    /** This method is called from within the constructor to
+    */
+/** This method is called from within the constructor to
      * initialize the form.
-     */
+     *//*
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -199,4 +206,4 @@ public class SettingsInterface extends javax.swing.JPanel {
     private javax.swing.JButton save;
     private javax.swing.JList worlds;
     // End of variables declaration//GEN-END:variables
-}
+}*/
