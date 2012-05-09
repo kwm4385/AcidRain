@@ -27,15 +27,13 @@ public class Util {
     private static List<Player> affectedPlayers = new ArrayList<Player>();
 
     
-    public static final List<Material> AFFECTED_MATERIALS = Arrays.asList(new Material[] {
-        Material.GRASS, 
-        Material.LONG_GRASS,
-        Material.LEAVES,
-        Material.RED_ROSE,
-        Material.YELLOW_FLOWER,
-        Material.SOIL,
-        Material.CROPS
-    });
+    public static final List<Material> AFFECTED_MATERIALS = Arrays.asList(Material.GRASS,
+            Material.LONG_GRASS,
+            Material.LEAVES,
+            Material.RED_ROSE,
+            Material.YELLOW_FLOWER,
+            Material.SOIL,
+            Material.CROPS);
 
     // Debug on/off
     public static final boolean debugOn = false;

@@ -4,6 +4,8 @@ package com.escapeNT.acidRain;
 
 import com.escapeNT.acidRain.Listeners.AcidRainPlayerListener;
 import com.escapeNT.acidRain.Listeners.AcidRainWeatherListener;
+import com.escapeNT.acidRain.PailCompat.SettingsInterface;
+import me.escapeNT.pail.Pail;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -56,10 +58,10 @@ public class AcidRain extends JavaPlugin {
             this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new BlockDissolveTask(this), 600L, 1200L);
         }
 
-        // Fuck pail
-/*        if(pm.getPlugin("Pail") != null) {
-            ((Pail)pm.getPlugin("Pail")).loadInterfaceComponent("Acid Rain", new SettingsInterface());
-        }*/
+        // Pail
+        if(pm.getPlugin("Pail") != null) {
+            ((Pail)pm.getPlugin("Pail")).loadInterfaceComponent("Acid Rain", new SettingsInterface(this));
+        }
 
         // Finish
         Util.log("version " + PLUGIN_VERSION + " enabled.");
