@@ -1,6 +1,8 @@
 
+
 package com.escapeNT.acidRain.PailCompat;
 
+import com.escapeNT.acidRain.AcidRain;
 import com.escapeNT.acidRain.Config;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,14 +12,15 @@ import javax.swing.JOptionPane;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
-/**
- * Settings interface for Pail
- * @author escapeNT
- */
+
 public class SettingsInterface extends javax.swing.JPanel {
 
-    /** Creates new form SettingsInterface */
-    public SettingsInterface() {
+
+    private AcidRain instance;
+
+
+    public SettingsInterface(AcidRain ar) {
+        this.instance = ar;
         initComponents();
         for(World w : Bukkit.getServer().getWorlds()) {
             ((DefaultListModel)worlds.getModel()).addElement(w.getName());
@@ -26,16 +29,16 @@ public class SettingsInterface extends javax.swing.JPanel {
     }
 
     private void readConfig() {
-        broadcast.setSelected(Config.willBroadcastMessage());
-        damage.setValue(Config.getRainDamage());
-        dissolve.setSelected(Config.willDissolveBlocks());
-        interval.setValue(Config.getDamageInterval());
-        dissolveRate.setValue(Config.getDissolveBlockChance());
-        message.setText(Config.getRainMessage());
-        rainChance.setValue(Config.getAcidRainChance());
+        broadcast.setSelected(instance.getConfig().getBoolean(Config.broadcastMessage));
+        damage.setValue(instance.getConfig().getInt(Config.rainDamage));
+        dissolve.setSelected(instance.getConfig().getBoolean(Config.dissolveBlocks));
+        interval.setValue(instance.getConfig().getInt(Config.damageInterval));
+        dissolveRate.setValue(instance.getConfig().getInt(Config.dissolveBlockChance));
+        message.setText(instance.getConfig().getString(Config.rainMessage));
+        rainChance.setValue(instance.getConfig().getInt(Config.acidRainChance));
 
         List<Integer> i = new ArrayList<Integer>();
-        for(String s : Config.getWorldsEnabled()) {
+        for(String s : instance.getConfig().getStringList(Config.worldsEnabled)) {
             i.add(((DefaultListModel)worlds.getModel()).indexOf(s));
         }
         int[] indices = new int[i.size()];
@@ -45,9 +48,6 @@ public class SettingsInterface extends javax.swing.JPanel {
         worlds.setSelectedIndices(indices);
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -159,22 +159,22 @@ public class SettingsInterface extends javax.swing.JPanel {
     }//GEN-LAST:event_revertActionPerformed
 
     private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
-        Config.setAcidRainChance(((Integer)rainChance.getValue()).intValue());
-        Config.setDamageInterval(((Integer)interval.getValue()).intValue());
-        Config.setRainDamage(((Integer)damage.getValue()).intValue());
-        Config.setDissolveBlockChance(((Integer)dissolveRate.getValue()).intValue());
-        Config.setBroadcastMessage(broadcast.isSelected());
-        Config.setDissolveBlocks(dissolve.isSelected());
-        Config.setRainMessage(message.getText());
+        instance.getConfig().set(Config.acidRainChance, ((Integer)rainChance.getValue()).intValue());
+        instance.getConfig().set(Config.damageInterval, ((Integer)interval.getValue()).intValue());
+        instance.getConfig().set(Config.rainDamage, ((Integer)damage.getValue()).intValue());
+        instance.getConfig().set(Config.dissolveBlockChance, ((Integer)dissolveRate.getValue()).intValue());
+        instance.getConfig().set(Config.broadcastMessage, broadcast.isSelected());
+        instance.getConfig().set(Config.dissolveBlocks, dissolve.isSelected());
+        instance.getConfig().set(Config.rainMessage, message.getText());
 
         List<Object> w = Arrays.asList(worlds.getSelectedValues());
         List<String> worldNames = new ArrayList<String>();
         for(Object o : w) {
             worldNames.add(o.toString());
         }
-        Config.setWorldsEnabled(worldNames);
+        instance.getConfig().set(Config.worldsEnabled, worldNames);
 
-        Config.save();
+        instance.saveConfig();
 
         JOptionPane.showMessageDialog(this, "Config saved!", "Save", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_saveActionPerformed

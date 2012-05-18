@@ -1,14 +1,16 @@
 
 
-package com.escapeNT.acidRain;
+package com.escapeNT.acidRain.Listeners;
 
+import com.escapeNT.acidRain.Util;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -16,7 +18,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
  *
  * @author escapeNT
  */
-public class AcidRainPlayerListener extends PlayerListener {
+public class AcidRainPlayerListener implements Listener {
 
     /**
      * Tests if a player is outdoors (has all air over their head).
@@ -28,6 +30,9 @@ public class AcidRainPlayerListener extends PlayerListener {
         World w = player.getWorld();
         Location l = player.getLocation();
 
+        //The world height is higher than this, but I'm thinking stopping here would make it seem more
+        //realistic.  This way the player is unaffected above clouds, and down below they won't have protection
+        //if the blocks are way too high in the air.  Accounts for realistic wind.
         for(int locY = player.getLocation().getBlockY() + 2; locY <= 126; locY++) {
             if(w.getBlockAt(l.getBlockX(), locY, l.getBlockZ()).getType() != Material.AIR) {
                 o = false;
@@ -37,31 +42,37 @@ public class AcidRainPlayerListener extends PlayerListener {
         return o;
     }
 
-    @Override
+    @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player p = event.getPlayer();
         World w = p.getWorld();
         Biome b = w.getBlockAt(p.getLocation()).getBiome();
 
-        if(isOutdoors(p) && Util.getWorldIsAcidRaining().get(w) 
-                && b != Biome.TUNDRA && b != Biome.TAIGA && b != Biome.DESERT) {
+        /*Prevents a NPE*/
+        if (!Util.getWorldIsAcidRaining().containsKey(w)) {
+            Util.getWorldIsAcidRaining().put(w, false);
+        }
+
+        if(isOutdoors(p) && Util.getWorldIsAcidRaining().get(w)) {
+            if (b == Biome.TAIGA || b == Biome.DESERT || b == Biome.TUNDRA) {
+                return;
+            }
             if(!Util.getAffectedPlayers().contains(p)) {
                 Util.getAffectedPlayers().add(p);
             }
-        }
-        else {
+        } else {
             Util.getAffectedPlayers().remove(p);
         }
     }
 
-    @Override
+    @EventHandler
     public void onPlayerKick(PlayerKickEvent event) {
         if(Util.getAffectedPlayers().contains(event.getPlayer())) {
             Util.getAffectedPlayers().remove(event.getPlayer());
         }
     }
 
-    @Override
+    @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         if(Util.getAffectedPlayers().contains(event.getPlayer())) {
             Util.getAffectedPlayers().remove(event.getPlayer());

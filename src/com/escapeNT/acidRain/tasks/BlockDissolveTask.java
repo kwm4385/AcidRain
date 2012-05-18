@@ -17,6 +17,14 @@ import org.bukkit.block.Block;
  * @author escapeNT
  */
 public class BlockDissolveTask implements Runnable {
+
+
+    private AcidRain instance;
+
+
+    public BlockDissolveTask(AcidRain ar) {
+        this.instance = ar;
+    }
     
     public void run() {
         Random r = new Random();
@@ -39,7 +47,7 @@ public class BlockDissolveTask implements Runnable {
                                 Block b = c.getBlock(x, y, z);
                                 if(Util.AFFECTED_MATERIALS.contains(b.getType())) {
                                     int randInt = r.nextInt(100);
-                                    if(randInt <= Config.getDissolveBlockChance()) {
+                                    if(randInt <= instance.getConfig().getInt(Config.dissolveBlockChance)) {
                                         Util.dissolveBlock(b); 
                                     }
                                     break;

@@ -1,0 +1,11 @@
+Acid Rain Configuration:
+  Broadcast message: true
+  Broadcast message text: Acid rain has begun in <world>
+  Rain dissolves blocks: true
+  Chance to dissolve block (0-100): 5
+  Damage Interval: 1
+  Acid rain damage: 1
+  Acid rain chance (0-100): 25
+  Enabled Worlds:
+  - world
+  - otherworld

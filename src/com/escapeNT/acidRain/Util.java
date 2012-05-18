@@ -20,20 +20,20 @@ import org.bukkit.entity.Player;
  */
 public class Util {
 
+
     private static final Logger log = Logger.getLogger("Minecraft");
     private static AcidRain plugin;
     private static HashMap<World, Boolean> worldIsAcidRaining = new HashMap<World, Boolean>();
     private static List<Player> affectedPlayers = new ArrayList<Player>();
+
     
-    public static final List<Material> AFFECTED_MATERIALS = Arrays.asList(new Material[] {
-        Material.GRASS, 
-        Material.LONG_GRASS,
-        Material.LEAVES,
-        Material.RED_ROSE,
-        Material.YELLOW_FLOWER,
-        Material.SOIL,
-        Material.CROPS
-    });
+    public static final List<Material> AFFECTED_MATERIALS = Arrays.asList(Material.GRASS,
+            Material.LONG_GRASS,
+            Material.LEAVES,
+            Material.RED_ROSE,
+            Material.YELLOW_FLOWER,
+            Material.SOIL,
+            Material.CROPS);
 
     // Debug on/off
     public static final boolean debugOn = false;
@@ -109,7 +109,7 @@ public class Util {
         color.put("&e", ChatColor.YELLOW);
         color.put("&f", ChatColor.WHITE);  
         
-        String message = Config.getRainMessage().replace("<world>", w.getName());
+        String message = plugin.getConfig().getString(Config.rainMessage).replace("<world>", w.getName());
         ChatColor col = ChatColor.GRAY;
         for(String s : color.keySet()) {
             if(message.contains(s)) {
@@ -118,7 +118,7 @@ public class Util {
                 break;
             }
         }
-        if(Config.willBroadcastMessage()) {
+        if(plugin.getConfig().getBoolean(Config.broadcastMessage)) {
             Util.getPlugin().getServer().broadcastMessage(col + message);
         }
     }
