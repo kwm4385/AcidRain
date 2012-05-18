@@ -38,8 +38,8 @@ public class AcidRain extends JavaPlugin {
         Config config = new Config(this);
         config.load();
         
-        for(World w : this.getServer().getWorlds()) {
-            Util.getWorldIsAcidRaining().put(w, Boolean.FALSE);
+        for(World w : getServer().getWorlds()) {
+            Util.getWorldIsAcidRaining().put(w, false);
         }
 
         // Register events

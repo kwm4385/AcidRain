@@ -48,13 +48,19 @@ public class AcidRainPlayerListener implements Listener {
         World w = p.getWorld();
         Biome b = w.getBlockAt(p.getLocation()).getBiome();
 
-        if(isOutdoors(p) && Util.getWorldIsAcidRaining().get(w)
-                && b != Biome.TUNDRA && b != Biome.TAIGA && b != Biome.DESERT) {
+        /*Prevents a NPE*/
+        if (!Util.getWorldIsAcidRaining().containsKey(w)) {
+            Util.getWorldIsAcidRaining().put(w, false);
+        }
+
+        if(isOutdoors(p) && Util.getWorldIsAcidRaining().get(w)) {
+            if (b == Biome.TAIGA || b == Biome.DESERT || b == Biome.TUNDRA) {
+                return;
+            }
             if(!Util.getAffectedPlayers().contains(p)) {
                 Util.getAffectedPlayers().add(p);
             }
-        }
-        else {
+        } else {
             Util.getAffectedPlayers().remove(p);
         }
     }
